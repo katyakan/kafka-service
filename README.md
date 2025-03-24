@@ -18,19 +18,6 @@
 
 Документация API доступна по адресу: [http://localhost:3000/api](http://localhost:3000/api)
 
-## Архитектура
-
-```
-┌────────────────┐     ┌─────────┐     ┌────────────────┐     ┌─────────────┐
-│ Producer       │     │         │     │ Notification   │     │   Telegram  │
-│ Service (3000) │ ──► │  Kafka  │ ──► │ Service        │ ──► │   Bot API   │
-└────────────────┘     │         │     └────────────────┘     └─────────────┘
-                       │         │     ┌────────────────┐
-                       └─────────┘ ──► │ Consumer       │
-                                       │ Service (3001) │
-                                       └────────────────┘
-```
-
 ## Структура проекта
 
 ```
@@ -59,10 +46,13 @@ libs/
 npm install
 ```
 
-2. Запустите Kafka и Zookeeper:
-
-```bash
-docker-compose up -d zookeeper kafka
+2. Создайте .env file в корне репозитория:
+```
+TELEGRAM_BOT_TOKEN=<your_telegram_bot_token_here>
+KAFKA_BROKERS=kafka:9092
+PRODUCER_PORT=3000
+CONSUMER_PORT=3001
+NOTIFICATION_PORT=3002
 ```
 
 3. Запустите сервисы в отдельных терминалах:
@@ -71,21 +61,21 @@ docker-compose up -d zookeeper kafka
 
 ```bash
 export TELEGRAM_BOT_TOKEN=<ваш_токен> KAFKA_BROKERS=localhost:9092 PORT=3000
-npm run start:dev producer-service
+npm run start:dev:producer
 ```
 
 **Терминал 2 (Consumer)**
 
 ```bash
 export TELEGRAM_BOT_TOKEN=<ваш_токен> KAFKA_BROKERS=localhost:9092 PORT=3001
-npm run start:dev consumer-service
+npm run start:dev:consumer
 ```
 
 **Терминал 3 (Notification)**
 
 ```bash
 export TELEGRAM_BOT_TOKEN=<ваш_токен> KAFKA_BROKERS=localhost:9092 PORT=3002
-npm run start:dev notification-service
+npm run start:dev:notification
 ```
 
 ## Отправка уведомлений
@@ -108,4 +98,7 @@ curl -X POST http://localhost:3000/messages \
 
 1. Найдите своего бота в Telegram
 2. Напишите ему `/start`
-3. Он пришлёт вам ваш `chat_id`
+3. Перейдите по ссылке с вашим Your_Bot_API_Token и посмотрите ваш chat ID
+ ```
+https://api.telegram.org/bot<Your_Bot_API_Token>/getUpdates
+   ```
