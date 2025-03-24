@@ -1,11 +1,12 @@
 # Kafka Notification System
 
-A microservice-based system for sending notifications to Telegram using Kafka. The system consists of three services:
-- Producer Service - accepts HTTP requests and sends messages to Kafka
-- Consumer Service - reads messages from Kafka (demonstration service)
-- Notification Service - reads messages from Kafka and sends them to Telegram
+Микросервисная система для отправки уведомлений в Telegram с использованием Apache Kafka. Состоит из трёх сервисов:
 
-## Technologies
+- **Producer Service** — принимает HTTP-запросы и отправляет сообщения в Kafka
+- **Consumer Service** — получает и логирует сообщения из Kafka (демо-сервис)
+- **Notification Service** — получает сообщения из Kafka и отправляет уведомления в Telegram
+
+## Технологии
 
 - Node.js
 - NestJS
@@ -13,55 +14,11 @@ A microservice-based system for sending notifications to Telegram using Kafka. T
 - Docker
 - Telegram Bot API
 
-## Prerequisites
+## Swagger
 
-- Docker and Docker Compose
-- Node.js 18+
-- Telegram Bot Token (get it from @BotFather)
+Документация API доступна по адресу: [http://localhost:3000/api](http://localhost:3000/api)
 
-## Installation and Setup
-
-1. Clone the repository:
-```bash
-git clone git@github.com:merkushov/kafka-notification-system.git
-cd kafka-notification-system
-```
-
-2. Create `.env` file in the root directory:
-```env
-TELEGRAM_BOT_TOKEN=<your_telegram_bot_token_here>
-```
-
-3. Start the system using Docker Compose:
-```bash
-docker-compose up -d
-```
-
-## Usage
-
-### Sending a Notification
-
-Send a POST request to the Producer Service:
-
-```bash
-curl -X POST http://localhost:3000/messages \
--H "Content-Type: application/json" \
--d '{
-  "type": "notification",
-  "payload": {
-    "chatId": YOUR_TELEGRAM_CHAT_ID,
-    "text": "Hello from Producer Service!"
-  }
-}'
-```
-
-### Getting Your Chat ID
-
-1. Find your bot in Telegram
-2. Send the `/start` command
-3. The bot will reply with your Chat ID
-
-## Architecture
+## Архитектура
 
 ```
 ┌────────────────┐     ┌─────────┐     ┌────────────────┐     ┌─────────────┐
@@ -74,122 +31,81 @@ curl -X POST http://localhost:3000/messages \
                                        └────────────────┘
 ```
 
-### System Components
-
-- **Producer Service (port 3000)**
-  - Accepts HTTP requests
-  - Validates incoming messages
-  - Sends messages to Kafka
-
-- **Kafka**
-  - Provides asynchronous communication between services
-  - Stores messages in the "notifications" topic
-  - Supports fault tolerance through the "dead-letter" topic
-
-- **Notification Service**
-  - Reads messages from Kafka
-  - Sends notifications to Telegram
-  - Handles delivery errors
-
-- **Consumer Service (port 3001)**
-  - Demonstration service
-  - Reads and logs messages from Kafka
-
-## API Documentation
-
-Swagger UI is available at: `http://localhost:3000/api`
-
-## Development
-
-### Project Structure
+## Структура проекта
 
 ```
 apps/
-├── producer-service/     # Message intake service
-├── consumer-service/     # Demo consumer
-└── notification-service/ # Telegram delivery service
+├── producer-service/      # Приём сообщений и отправка в Kafka
+├── consumer-service/      # Демонстрационный потребитель
+└── notification-service/  # Отправка сообщений в Telegram
+
 libs/
-└── shared/              # Shared interfaces and utilities
+└── shared/                # Общие интерфейсы и утилиты
 ```
 
-### Running in Development Mode
+## Переменные окружения
+
+| Переменная           | Описание                         | Значение по умолчанию |
+|----------------------|----------------------------------|------------------------|
+| TELEGRAM_BOT_TOKEN   | Токен Telegram-бота              | —                      |
+| KAFKA_BROKERS        | Адреса Kafka-брокеров            | localhost:9092         |
+| PORT                 | Порт сервиса                     | 3000 / 3001 / 3002     |
+
+## Локальный запуск
+
+1. Установите зависимости:
 
 ```bash
-# Install dependencies
 npm install
-
-# Start a service
-npm run start:dev
 ```
 
-### Testing
+2. Запустите Kafka и Zookeeper:
 
-```bash
-# unit tests
-npm run test
-
-# e2e tests
-npm run test:e2e
-
-# test coverage
-npm run test:cov
-```
-
-### Environment Variables
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| TELEGRAM_BOT_TOKEN | Your Telegram bot token | - |
-| KAFKA_BROKERS | Kafka broker addresses | localhost:9092 |
-| port | Service port | 3000 |
-
-## Docker Services
-
-| Service | Port | Description |
-|---------|------|-------------|
-| producer-service | 3000 | HTTP API endpoint |
-| consumer-service | 3001 | Demo consumer service |
-| notification-service | - | Telegram notification sender |
-| kafka | 9092 | Message broker |
-| zookeeper | 2181 | Kafka dependency |
-
-## Monitoring
-
-- Service logs are available through Docker:
-```bash
-docker-compose logs -f [service-name]
-```
-
-## Local Development Setup
-
-1. Start Kafka infrastructure:
 ```bash
 docker-compose up -d zookeeper kafka
 ```
 
-2. Run services locally:
+3. Запустите сервисы в отдельных терминалах:
+
+**Терминал 1 (Producer)**
+
 ```bash
-# Terminal 1
-export TELEGRAM_BOT_TOKEN=<your_telegram_bot_token_here> KAFKA_BROKERS=localhost:9092 PORT=3000
+export TELEGRAM_BOT_TOKEN=<ваш_токен> KAFKA_BROKERS=localhost:9092 PORT=3000
 npm run start:dev producer-service
+```
 
-# Terminal 2
-export TELEGRAM_BOT_TOKEN=<your_telegram_bot_token_here> KAFKA_BROKERS=localhost:9092 PORT=3001
+**Терминал 2 (Consumer)**
+
+```bash
+export TELEGRAM_BOT_TOKEN=<ваш_токен> KAFKA_BROKERS=localhost:9092 PORT=3001
 npm run start:dev consumer-service
+```
 
-# Terminal 3
-export TELEGRAM_BOT_TOKEN=<your_telegram_bot_token_here> KAFKA_BROKERS=localhost:9092 PORT=3002
+**Терминал 3 (Notification)**
+
+```bash
+export TELEGRAM_BOT_TOKEN=<ваш_токен> KAFKA_BROKERS=localhost:9092 PORT=3002
 npm run start:dev notification-service
 ```
 
-## Contributing
+## Отправка уведомлений
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+Пример запроса:
 
-## License
+```bash
+curl -X POST http://localhost:3000/messages \
+-H "Content-Type: application/json" \
+-d '{
+  "type": "notification",
+  "payload": {
+    "chatId": ВАШ_CHAT_ID,
+    "text": "Привет от Producer!"
+  }
+}'
+```
 
-[UNLICENSED]
+## Получение Chat ID
+
+1. Найдите своего бота в Telegram
+2. Напишите ему `/start`
+3. Он пришлёт вам ваш `chat_id`

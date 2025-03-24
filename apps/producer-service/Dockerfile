@@ -10,8 +10,6 @@ COPY .env .env
 COPY apps ./apps
 COPY libs ./libs
 
-COPY apps/producer-service/src/main.ts ./apps/producer-service/
-
 RUN npm install
 RUN npm run build:producer-service
 

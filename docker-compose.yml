@@ -45,6 +45,7 @@ services:
       kafka:
         condition: service_healthy
     environment:
+      PRODUCER_PORT: 3001
       KAFKA_BROKERS: kafka:29092
     env_file:
       - .env

@@ -3,13 +3,20 @@
   "compilerOptions": {
     "declaration": false,
     "outDir": "../../dist/apps/producer-service",
-    "rootDir": "../../",
-    "baseUrl": "../../"
+    "rootDir": "../../", // 👈 охватываем apps и libs
+    "baseUrl": "../../",
+    "paths": {
+      "@libs/shared": [
+        "libs/shared/src"
+      ],
+      "@libs/shared/*": [
+        "libs/shared/src/*"
+      ]
+    }
   },
   "include": [
-    "apps/producer-service/src/**/*",
-    "apps/producer-service/src/main.ts",
-    "libs/**/*"
+    "../../apps/producer-service/src/**/*", // 👈 путь от корня
+    "../../libs/**/*"
   ],
   "exclude": [
     "node_modules",
