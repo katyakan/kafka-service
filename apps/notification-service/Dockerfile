@@ -29,6 +29,6 @@ RUN npm install
 COPY apps/notification-service ./apps/notification-service
 COPY libs ./libs
 
-RUN npm run build notification-service
+RUN npm run build 
 
-CMD ["node", "dist/apps/notification-service/apps/notification-service/src/main"]
+CMD ["node", "dist/apps/notification-service/src/main"]

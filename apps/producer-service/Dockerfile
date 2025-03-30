@@ -18,8 +18,8 @@ COPY apps/producer-service ./apps/producer-service
 COPY libs ./libs
 
 # Build the application
-RUN npm run build producer-service
+RUN npm run build 
 
 # Keep container alive with tail -f /dev/null
 # CMD tail -f /dev/null
-CMD sh -c "tree /usr/src/app/dist && node dist/apps/producer-service/apps/producer-service/src/main"
+CMD sh -c "tree /usr/src/app/dist && node dist/apps/producer-service/src/main"

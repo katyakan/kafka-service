@@ -1,20 +1,3 @@
-# FROM node:20-alpine
-
-# WORKDIR /usr/src/app
-
-# COPY package*.json ./
-# COPY tsconfig*.json ./
-# COPY .env .env
-# COPY nest-cli.json ./
-
-# RUN npm install
-
-# COPY apps/consumer-service ./apps/consumer-service
-# COPY libs ./libs
-
-# RUN npm run build consumer-service
-
-# CMD ["node", "dist/apps/consumer-service/main"]
 
 FROM node:18-alpine
 
@@ -29,6 +12,6 @@ RUN npm install
 COPY apps/consumer-service ./apps/consumer-service
 COPY libs ./libs
 
-RUN npm run build consumer-service
+RUN npm run build 
 
-CMD ["node", "dist/apps/consumer-service/apps/consumer-service/src/main"]
+CMD ["node", "dist/apps/consumer-service/src/main"]
