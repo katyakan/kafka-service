@@ -1,4 +1,4 @@
-version: '3.8'
+# version: '3.8'
 
 services:
   zookeeper:
@@ -9,7 +9,7 @@ services:
     ports:
       - "2181:2181"
     healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "2181"]
+      test: [ "CMD", "nc", "-z", "localhost", "2181" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -30,7 +30,7 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
     healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "9092"]
+      test: [ "CMD", "nc", "-z", "localhost", "9092" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -45,39 +45,53 @@ services:
       kafka:
         condition: service_healthy
     environment:
-      PRODUCER_PORT: 3001
       KAFKA_BROKERS: kafka:29092
-    env_file:
-      - .env
 
   consumer-service:
     build:
       context: .
       dockerfile: ./apps/consumer-service/Dockerfile
     ports:
-      - "3001:3001"
+      - "3001:3000"
     depends_on:
       kafka:
         condition: service_healthy
     environment:
-      CONSUMER_PORT: 3001
       KAFKA_BROKERS: kafka:29092
-      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
-    env_file:
-      - .env
-     
 
   notification-service:
     build:
       context: .
       dockerfile: ./apps/notification-service/Dockerfile
-    ports:
-      - "3002:3002"
     depends_on:
       kafka:
         condition: service_healthy
+      kafka-setup:
+        condition: service_completed_successfully
     environment:
       KAFKA_BROKERS: kafka:29092
-      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
     env_file:
       - .env
+    restart: on-failure
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  kafka-setup:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      kafka:
+        condition: service_healthy
+    command: >
+      bash -c "
+        echo 'Waiting for Kafka to be ready...' &&
+        cub kafka-ready -b kafka:29092 1 30 &&
+        kafka-topics --create --if-not-exists --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --topic notifications &&
+        kafka-topics --create --if-not-exists --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --topic dead-letter
+      "
+
+
+

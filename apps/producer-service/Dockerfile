@@ -1,25 +1,25 @@
-# Stage 1 — builder
-FROM node:20-alpine AS builder
+FROM node:18-alpine
 
-WORKDIR /app
+# Install tree
+RUN apk add --no-cache tree
 
+WORKDIR /usr/src/app
+
+# Copy package files
 COPY package*.json ./
-COPY nest-cli.json ./
 COPY tsconfig*.json ./
-COPY .env .env
-COPY apps ./apps
+COPY nest-cli.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy source code
+COPY apps/producer-service ./apps/producer-service
 COPY libs ./libs
 
-RUN npm install
-RUN npm run build:producer-service
+# Build the application
+RUN npm run build producer-service
 
-# Stage 2 — runtime
-FROM node:20-alpine
-
-WORKDIR /app
-
-COPY --from=builder /app/dist /app/dist
-COPY --from=builder /app/node_modules /app/node_modules
-COPY package*.json ./
-
-CMD ["node", "dist/apps/producer-service/main.js"]
+# Keep container alive with tail -f /dev/null
+# CMD tail -f /dev/null
+CMD sh -c "tree /usr/src/app/dist && node dist/apps/producer-service/apps/producer-service/src/main"

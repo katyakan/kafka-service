@@ -2,26 +2,15 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "declaration": false,
-    "outDir": "../../dist/apps/producer-service",
-    "rootDir": "../../", // 👈 охватываем apps и libs
-    "baseUrl": "../../",
-    "paths": {
-      "@libs/shared": [
-        "libs/shared/src"
-      ],
-      "@libs/shared/*": [
-        "libs/shared/src/*"
-      ]
-    }
+    "outDir": "../../dist/apps/producer-service"
   },
   "include": [
-    "../../apps/producer-service/src/**/*", // 👈 путь от корня
-    "../../libs/**/*"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",
     "dist",
     "test",
-    "**/*.spec.ts"
+    "**/*spec.ts"
   ]
 }

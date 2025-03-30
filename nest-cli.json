@@ -26,7 +26,6 @@
       "root": "apps/producer-service",
       "entryFile": "main",
       "sourceRoot": "apps/producer-service/src",
-    
       "compilerOptions": {
         "tsConfigPath": "apps/producer-service/tsconfig.app.json"
       }
