@@ -64,7 +64,7 @@ npm install
 ```
 2. Запустите Kafka и Zookeeper:
 ```bash
- docker-compose up -d zookeeper kafka
+ docker-compose up -d zookeeper kafka kafka-setup
 ```
 3. Запустите сервисы в отдельных терминалах:
 
