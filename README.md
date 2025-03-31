@@ -39,8 +39,8 @@ libs/
 | PORT                 | Порт сервиса                     | 3000 / 3001 / 3002    
 
 ## Установка
-1. Клонируйте репозиторй
- |```bash
+1. Клонируйте репозиторий
+```bash
 git clone https://github.com/katyakan/kafka-service .
 ```
 2. Создайте .env file в корне репозитория:
