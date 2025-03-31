@@ -36,7 +36,24 @@ libs/
 |----------------------|----------------------------------|------------------------|
 | TELEGRAM_BOT_TOKEN   | Токен Telegram-бота              | —                      |
 | KAFKA_BROKERS        | Адреса Kafka-брокеров            | localhost:9092         |
-| PORT                 | Порт сервиса                     | 3000 / 3001 / 3002     |
+| PORT                 | Порт сервиса                     | 3000 / 3001 / 3002    
+
+## Установка
+1. Клонируйте репозиторй
+ |```bash
+git clone https://github.com/katyakan/kafka-service .
+```
+2. Создайте .env file в корне репозитория:
+```
+TELEGRAM_BOT_TOKEN=<your_telegram_bot_token_here>
+
+```
+## Запуск докер контейнера
+```bash
+docker-compose build
+docker-compose up -d
+
+```
 
 ## Локальный запуск
 
@@ -45,36 +62,30 @@ libs/
 ```bash
 npm install
 ```
-
-2. Создайте .env file в корне репозитория:
+2. Запустите Kafka и Zookeeper:
+```bash
+ docker-compose up -d zookeeper kafka
 ```
-TELEGRAM_BOT_TOKEN=<your_telegram_bot_token_here>
-KAFKA_BROKERS=kafka:9092
-PRODUCER_PORT=3000
-CONSUMER_PORT=3001
-NOTIFICATION_PORT=3002
-```
-
 3. Запустите сервисы в отдельных терминалах:
 
 **Терминал 1 (Producer)**
 
 ```bash
-export TELEGRAM_BOT_TOKEN=<ваш_токен> KAFKA_BROKERS=localhost:9092 PORT=3000
+export PORT=3000
 npm run start:dev:producer
 ```
 
 **Терминал 2 (Consumer)**
 
 ```bash
-export TELEGRAM_BOT_TOKEN=<ваш_токен> KAFKA_BROKERS=localhost:9092 PORT=3001
+export PORT=3001
 npm run start:dev:consumer
 ```
 
 **Терминал 3 (Notification)**
 
 ```bash
-export TELEGRAM_BOT_TOKEN=<ваш_токен> KAFKA_BROKERS=localhost:9092 PORT=3002
+export  PORT=3002
 npm run start:dev:notification
 ```
 
@@ -96,9 +107,7 @@ curl -X POST http://localhost:3000/messages \
 
 ## Получение Chat ID
 
-1. Найдите своего бота в Telegram
+1. Найдите  бота https://t.me/userinfobot в Telegram
 2. Напишите ему `/start`
-3. Перейдите по ссылке с вашим Your_Bot_API_Token и посмотрите ваш chat ID
- ```
-https://api.telegram.org/bot<Your_Bot_API_Token>/getUpdates
-   ```
+3. Просмотрите ваш chat ID
+
